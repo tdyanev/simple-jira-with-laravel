@@ -15,13 +15,13 @@ class CreateTasks extends Migration
     {
         Schema::create('tasks', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('title', 50);
+            $table->string('title', 200);
             $table->text('description');
             $table->integer('creator_user_id')->unsigned();
-            $table->integer('parent_task_id')->unsigned();
-            $table->tinyInteger('status');
-            $table->dateTime('date_finished');
-            $table->tinyInteger('priority');
+            $table->integer('parent_task_id')->nullable()->unsigned();
+            $table->tinyInteger('status')->unsigned();
+            $table->tinyInteger('priority')->unsigned();
+            $table->timestamp('finished_at')->nullable();
 
             $table->foreign('creator_user_id')->references('id')->on('users');
             $table->foreign('parent_task_id')->references('id')->on('tasks');

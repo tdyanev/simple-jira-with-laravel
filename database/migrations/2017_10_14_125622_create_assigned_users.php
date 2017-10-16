@@ -17,6 +17,8 @@ class CreateAssignedUsers extends Migration
             $table->integer('user_id')->unsigned();
             $table->integer('task_id')->unsigned();
 
+            $table->unique(['user_id', 'task_id']);
+
             $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('task_id')->references('id')->on('tasks');
         });
