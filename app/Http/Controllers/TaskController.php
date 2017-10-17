@@ -72,6 +72,8 @@ class TaskController extends Controller
                 'task_id' => $task->id
             ]);
         }
+
+        return redirect()->route('home');
     }
 
     /**
