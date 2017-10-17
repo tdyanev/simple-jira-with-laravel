@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Task;
+use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class TaskController extends Controller
 {
@@ -11,12 +14,11 @@ class TaskController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
-    {
+    public function index(Request $request) {
+        $tasks = Task::prioritize()->get();
 
         return view('tasks.index', [
-            'tasks' => \App\Task::all()->toArray(),
-//            where('parent_task_id', NULL)->get(),
+            'tasks' => $tasks,
         ]);
     }
 
@@ -25,9 +27,21 @@ class TaskController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
-    {
-        //
+    public function create() {
+
+        return view('tasks.create', [
+            'users' => User::all(),
+            'tasks' => Task::all(),
+        ]);
+    }
+
+    public function search(Request $request) {
+        $string = $request->query('string');
+
+        return view('tasks.flat', [
+            'tasks' => Task::where('title',
+            'LIKE', "%{$string}%")->prioritize()->get()
+        ]);
     }
 
     /**
@@ -36,9 +50,28 @@ class TaskController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
-    {
-        //
+    public function store(Request $request) {
+        $task = new Task;
+
+        $task->title = $request->title;
+        $task->description = $request->description;
+        $task->creator_user_id = $request->creator_user_id;
+        $task->priority = $request->priority;
+        $task->status = $request->status;
+        $task->parent_task_id = $request->parent_task_id;
+
+        if ($task->parent_task_id === '0') {
+            $task->parent_task_id = NULL;
+        }
+
+        $task->save();
+
+        foreach($request->assigned_users as $user_id) {
+            DB::table('assigned_users')->insert([
+                'user_id' => $user_id,
+                'task_id' => $task->id
+            ]);
+        }
     }
 
     /**
@@ -47,12 +80,11 @@ class TaskController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(\App\Task $task)
+    public function show(Task $task)
     {
         return view('tasks.show', [
             'task' => $task,
         ]);
-        //
     }
 
     /**
@@ -88,4 +120,5 @@ class TaskController extends Controller
     {
         //
     }
+
 }

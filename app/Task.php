@@ -13,5 +13,13 @@ class Task extends Model {
     public function parent_task() {
         return $this->belongsTo('App\Task', 'parent_task_id');
     }
-    //
+
+    public function working_users() {
+        return $this->belongsToMany('App\User', 'assigned_users');
+    }
+
+    public function scopePrioritize($query) {
+        return $query->orderBy('priority', 'desc');
+    }
+
 }

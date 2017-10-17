@@ -11,4 +11,10 @@
 |
 */
 
+Route::get('/', 'TaskController@index')->name('home');
+
+Route::get('tasks/search', 'TaskController@search')->name('tasks.search');
+
 Route::resource('tasks', 'TaskController');
+
+Route::resource('users', 'UserController');

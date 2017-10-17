@@ -1,8 +1,13 @@
 @php
 
-$tasks = array_filter($data, function($el) use($key) {
-    return $el['parent_task_id'] === $key;
-});
+$tasks = [];
+
+foreach ($data as $task) {
+    if ($task->parent_task_id === $key) {
+        $tasks[] = $task;
+    }
+
+}
 
 @endphp
 
@@ -11,13 +16,13 @@ $tasks = array_filter($data, function($el) use($key) {
 
     @foreach ($tasks as $task)
 
-        <li><a href="{{ route('tasks.show', [
-            'id' => $task['id'],
-        ]) }}">{{ $task['title'] }}</a></li>
+        <li>
+            @include('tasks.link', [ 'data' => $task ])
+        </li>
 
         @include('tasks.tree', [
             'data' => $data,
-            'key' => intval($task['id']),
+            'key' => intval($task->id),
         ])
 
     @endforeach

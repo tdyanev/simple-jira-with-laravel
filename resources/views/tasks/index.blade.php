@@ -1,6 +1,9 @@
-<h1>Tasks</h1>
+@include('nav')
 
-{{ count($tasks) }}
+<h2>Tasks ({{ count($tasks) }})</h2>
+
+@include('tasks.search')
+
 
 @include('tasks.tree', [
     'data' => $tasks,
